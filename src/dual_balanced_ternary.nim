@@ -1,28 +1,10 @@
 
+import deques
+
 import ./dual_balanced_ternary/types
 import ./dual_balanced_ternary/digit
 
-export DualBalancedTernaryDigit, DualBalancedTernary, add
-
-# 5 is the zero point of digits, can be removed at end
-proc stripEmptyTails(x: DualBalancedTernary): DualBalancedTernary =
-  if (x.integral.len == 0 or x.integral[^1] != dbt5) and
-    (x.fractional.len == 0 or x.fractional[^1] != dbt5):
-    return x
-  var y = x
-  while y.integral.len > 0 and y.integral[^1] == dbt5:
-    y.integral.delete(y.integral.len - 1)
-  while y.fractional.len > 0 and y.fractional[^1] == dbt5:
-    y.fractional.delete(y.fractional.len - 1)
-  return y
-
-proc `$`*(x: DualBalancedTernary): string =
-  result = "&"
-  for i in 0..<x.integral.len:
-    result = result & x.integral[x.integral.len - i - 1].digitToStr
-  result = result & "."
-  for i in 0..<x.fractional.len:
-    result = result & x.fractional[i].digitToStr
+export DualBalancedTernaryDigit, DualBalancedTernary, add, `$`, parseTernaryDigit, parseTernary
 
 proc negate*(a: DualBalancedTernary): DualBalancedTernary =
   result = a
@@ -31,8 +13,25 @@ proc negate*(a: DualBalancedTernary): DualBalancedTernary =
   for i in 0..<result.fractional.len:
     result.fractional[i] = result.fractional[i].negate
 
+# positive number to make value larger
 proc moveBy(a: DualBalancedTernary, n: int): DualBalancedTernary =
-  discard
+  var b = a
+  if n == 0:
+    return a
+  elif n > 0:
+    for i in 0..<n:
+      if b.fractional.len == 0:
+        b.integral.addFirst dbt5
+      else:
+        b.integral.addFirst b.fractional.popFirst
+  else:
+    # n < 0
+    for i in 0..<n:
+      if b.integral.len == 0:
+        b.fractional.addFirst dbt5
+      else:
+        b.fractional.addFirst b.integral.popFirst
+  return b
 
 proc add*(a, b: DualBalancedTernary): DualBalancedTernary =
   discard
