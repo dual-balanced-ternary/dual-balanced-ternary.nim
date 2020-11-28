@@ -9,7 +9,7 @@ import strutils
 #   2 9 4
 
 # how many digits in fractional part, when it's not divisible
-var devisionPrecision = 10
+var devisionPrecision* = 10
 
 type DualBalancedTernaryDigit* = enum
   dbt1, dbt2, dbt3, dbt4, dbt5, dbt6, dbt7, dbt8, dbt9
@@ -32,12 +32,15 @@ proc `$`*(d: DualBalancedTernaryDigit): string =
     of dbt9: "9"
 
 proc `$`*(x: DualBalancedTernary): string =
+  if x.integral.len == 0 and x.fractional.len == 0:
+    return "&5"
   result = "&"
   for i in 0..<x.integral.len:
     result = result & $x.integral[x.integral.len - i - 1]
-  result = result & "."
-  for i in 0..<x.fractional.len:
-    result = result & $x.fractional[i]
+  if x.fractional.len > 0:
+    result = result & "."
+    for i in 0..<x.fractional.len:
+      result = result & $x.fractional[i]
 
 proc parseTernaryDigit*(s: string): DualBalancedTernaryDigit =
   case s
@@ -54,7 +57,7 @@ proc parseTernaryDigit*(s: string): DualBalancedTernaryDigit =
       raise newException(ValueError, s & " is not valid ternary digit representation")
 
 # 5 is the zero point of digits, can be removed at end
-proc stripEmptyTails(x: DualBalancedTernary): DualBalancedTernary =
+proc stripEmptyTails*(x: DualBalancedTernary): DualBalancedTernary =
   if (x.integral.len == 0 or x.integral[^1] != dbt5) and
     (x.fractional.len == 0 or x.fractional[^1] != dbt5):
     return x
@@ -97,3 +100,28 @@ proc parseTernary*(s: string): DualBalancedTernary =
   if pieces.len > 2:
     raise newException(ValueError, "invalid format for a ternary value: " & s)
   result = result.stripEmptyTails
+
+proc ternary*(s: string): DualBalancedTernary =
+  s.parseTernary()
+
+proc `==`*(a, b: DualBalancedTernary): bool =
+  let a2 = a.stripEmptyTails()
+  let b2 = b.stripEmptyTails()
+  if a2.integral.len != b2.integral.len:
+    return false
+  if a2.fractional.len != b2.fractional.len:
+    return false
+  for idx, item in a2.integral:
+    if b2.integral[idx] != item:
+      return false
+  for idx, item in a2.fractional:
+    if b2.fractional[idx] != item:
+      return false
+
+  return true
+
+iterator pairs*(a: DualBalancedTernary): tuple[key: int, val: DualBalancedTernaryDigit] =
+  for idx, item in a.integral:
+    yield (idx, item)
+  for idx, item in a.fractional:
+    yield (-1 - idx, item)
