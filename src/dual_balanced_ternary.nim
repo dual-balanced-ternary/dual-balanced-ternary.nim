@@ -156,3 +156,51 @@ proc createDualBalancedTernary*(x, y: float): DualBalancedTernary =
   for idx, item in b.fractional:
     b.fractional[idx] = item.flipXy
   return a + b
+
+# keep value of 1 direction and flip 3 direction
+proc conjugate*(a: DualBalancedTernary): DualBalancedTernary =
+  result = a
+  for idx, item in result.integral:
+    result.integral[idx] = item.flipLeftRight
+  for idx, item in result.fractional:
+    result.fractional[idx] = item.flipLeftRight
+
+# value at y direction only contains 1, 5, 9,
+# value at x direction only contains 7, 5, 3.
+proc splitYx*(a: DualBalancedTernary): tuple[y: DualBalancedTernary, x: DualBalancedTernary] =
+  var x: DualBalancedTernary = a
+  var y: DualBalancedTernary = a
+  for idx, item in a.integral:
+    let v = item.splitYx
+    x.integral[idx] = v.x
+    y.integral[idx] = v.y
+  for idx, item in a.fractional:
+    let v = item.splitYx
+    x.fractional[idx] = v.x
+    y.fractional[idx] = v.y
+
+proc rotate3(a: DualBalancedTernary): DualBalancedTernary =
+  result = a
+  for idx, item in result.integral:
+    result.integral[idx] = item.rotate3
+  for idx, item in result.fractional:
+    result.fractional[idx] = item.rotate3
+
+proc rotate7(a: DualBalancedTernary): DualBalancedTernary =
+  result = a
+  for idx, item in result.integral:
+    result.integral[idx] = item.rotate7
+  for idx, item in result.fractional:
+    result.fractional[idx] = item.rotate7
+
+proc ternaryDivide(a, b: DualBalancedTernary): DualBalancedTernary =
+  discard
+
+proc `/`*(a, b: DualBalancedTernary): DualBalancedTernary =
+  let cj = b.conjugate()
+  let a2 = a * cj
+  let b2 = b * cj # support only 1,5,9 in value now
+  let splitted = a2.splitYx()
+  let ay = splitted.y
+  let ax = splitted.x
+  ay.ternaryDivide(b2) + (ax.ternaryDivide(b2.rotate7).rotate3)

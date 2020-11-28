@@ -243,3 +243,15 @@ proc mutiplyDigits*(a, b: DualBalancedTernaryDigit): DigitsPair =
         of dbt9: (dbt5, dbt2)
     of dbt9:
       (dbt5, b.negate)
+
+proc splitYx*(a: DualBalancedTernaryDigit): tuple[y: DualBalancedTernaryDigit, x: DualBalancedTernaryDigit] =
+  case a
+    of dbt1: (dbt1, dbt5)
+    of dbt2: (dbt9, dbt7)
+    of dbt3: (dbt5, dbt3)
+    of dbt4: (dbt9, dbt3)
+    of dbt5: (dbt5, dbt5)
+    of dbt6: (dbt1, dbt7)
+    of dbt7: (dbt5, dbt7)
+    of dbt8: (dbt1, dbt3)
+    of dbt9: (dbt9, dbt5)
