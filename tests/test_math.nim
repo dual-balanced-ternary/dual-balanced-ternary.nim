@@ -86,3 +86,25 @@ test "multiply":
   check "&.3".ternary * "&4".ternary == "&.2".ternary
   check "&.3".ternary * "&.4".ternary == "&.52".ternary
   check "&.3".ternary * "&45".ternary == "&2".ternary
+
+  check "&23".ternary * "&47".ternary == "&111".ternary
+  check "&616".ternary * "&751".ternary == "&743316".ternary
+  check "&616".ternary * "&751".ternary == "&743316".ternary
+  check "&751".ternary * "&616".ternary == "&743316".ternary
+
+  check "&3.3".ternary * "&1.3".ternary == "&3.49".ternary
+  check "&.5536".ternary * "&.5543".ternary == "&.55555928".ternary
+
+test "divide":
+  # echo "dividing...."
+  check ("&15".ternary / "&1".ternary) == "&15".ternary
+  check ("&111".ternary / "&23".ternary) == "&47".ternary
+  check ("&743316".ternary / "&616".ternary) == "&751".ternary
+  check ("&743316".ternary / "&751".ternary) == "&616".ternary
+
+  check "&3.49".ternary / "&3.3".ternary == "&1.3".ternary
+  check "&3.49".ternary / "&1.3".ternary == "&3.3".ternary
+
+  check "&.55555928".ternary / "&.5536".ternary == "&.5543".ternary
+
+  echo "&743317".ternary / "&616".ternary # not exact division

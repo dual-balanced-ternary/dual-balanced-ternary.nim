@@ -1,7 +1,7 @@
 
 import deques
 import math
-# import strformat
+import strformat
 
 import ./dual_balanced_ternary/types
 import ./dual_balanced_ternary/digit
@@ -16,7 +16,7 @@ proc negate*(a: DualBalancedTernary): DualBalancedTernary =
   for i in 0..<result.fractional.len:
     result.fractional[i] = result.fractional[i].negate
 
-# positive number to make value larger
+# TODO positive number to make value larger, not in use yet
 proc moveBy*(a: DualBalancedTernary, n: int): DualBalancedTernary =
   var b = a
   if n == 0:
@@ -96,11 +96,11 @@ proc `-`*(a, b: DualBalancedTernary): DualBalancedTernary =
 proc `*`*(a, b: DualBalancedTernary): DualBalancedTernary =
   for aIdx, aItem in a:
     for bIdx, bItem in b:
-      # echo fmt"adding {aIdx} {aItem} {bIdx} {bItem}"
       let v = mutiplyDigits(aItem, bItem)
       result = result.addAt(aIdx + bIdx, v.unit)
       if v.carry != dbt5:
         result = result.addAt(aIdx + bIdx + 1, v.carry)
+      # echo fmt"multiply a:{aItem} b:{bItem}, v:{v}, result:{result}"
 
 proc createDualBalancedTernary*(x: float): DualBalancedTernary =
   let negativeValue = x < 0
@@ -178,6 +178,7 @@ proc splitYx*(a: DualBalancedTernary): tuple[y: DualBalancedTernary, x: DualBala
     let v = item.splitYx
     x.fractional[idx] = v.x
     y.fractional[idx] = v.y
+  return (y.stripEmptyTails, x.stripEmptyTails)
 
 proc rotate3(a: DualBalancedTernary): DualBalancedTernary =
   result = a
@@ -193,8 +194,72 @@ proc rotate7(a: DualBalancedTernary): DualBalancedTernary =
   for idx, item in result.fractional:
     result.fractional[idx] = item.rotate7
 
+proc getFirstDigit(a: DualBalancedTernary): tuple[digit: DualBalancedTernaryDigit, idx: int] =
+  let a2 = a.stripEmptyTails()
+  if a2.integral.len > 0:
+    return (a2.integral.peekLast(), a2.integral.len - 1)
+  elif a2.fractional.len == 0:
+    return (dbt5, 0)
+  else:
+    for idx, item in a2.fractional:
+      if item != dbt5:
+        return (item, -1 - idx)
+
+let zero = DualBalancedTernary(
+  integral: initDeque[DualBalancedTernaryDigit](),
+  fractional: initDeque[DualBalancedTernaryDigit]()
+)
+
+# only works for paths containing 1,5,9
+proc `>`*(a, b: DualBalancedTernary): bool =
+  let delta = a - b
+  let head = delta.getFirstDigit
+  head.digit == dbt1
+
+# only works for paths containing 1,5,9
+proc `<`*(a, b: DualBalancedTernary): bool =
+  let delta = a - b
+  let head = delta.getFirstDigit
+  head.digit == dbt9
+
+# ternary divide only handles values consisted of 1,5,9
 proc ternaryDivide(a, b: DualBalancedTernary): DualBalancedTernary =
-  discard
+  # echo fmt"dividing: a b {a} {b}"
+  if a.isZero:
+    return a
+  if b.isZero:
+    raise newException(ValueError, "&5 is not a valid divisor as divisor")
+  if a.isLinearTernary.not:
+    raise newException(ValueError, "only linear ternary values allowed for a: " & $a)
+  if b.isLinearTernary.not:
+    raise newException(ValueError, "only linear ternary values allowed for b: " & $b)
+
+  var reminder = a
+  var precision = devisionPrecision * 2
+  # echo fmt"initial: {reminder} {b}"
+  while reminder.isZero.not and precision > 0:
+    # echo fmt"loop with reminder:{reminder} divisor:{b} result:{result}"
+    let aHead = reminder.getFirstDigit()
+    let bHead = b.getFirstDigit()
+    var tryPosition = aHead.idx - bHead.idx
+    var tryDigit = dbt5
+    # echo fmt"guessing {tryDigit} at {tryPosition}, with cond {aHead} {bHead}"
+    if aHead.digit == dbt1 and bHead.digit == dbt1:
+      tryDigit = dbt1
+    elif aHead.digit == dbt9 and bHead.digit == dbt9:
+      tryDigit = dbt1
+    elif aHead.digit == dbt1 and bHead.digit == dbt9:
+      tryDigit = dbt9
+    elif aHead.digit == dbt9 and bHead.digit == dbt1:
+      tryDigit = dbt9
+    else:
+      raise newException(ValueError, "TODO, unknown case")
+    let v = zero.addAt(tryPosition, tryDigit)
+    let step = v * b
+    reminder = reminder - step
+    result = result + v
+    precision = precision - 1
+  # echo fmt"temp result: {result}"
 
 proc `/`*(a, b: DualBalancedTernary): DualBalancedTernary =
   let cj = b.conjugate()
@@ -203,4 +268,6 @@ proc `/`*(a, b: DualBalancedTernary): DualBalancedTernary =
   let splitted = a2.splitYx()
   let ay = splitted.y
   let ax = splitted.x
-  ay.ternaryDivide(b2) + (ax.ternaryDivide(b2.rotate7).rotate3)
+  # echo fmt"b.. {b} {cj} => {b2}"
+  # echo fmt"splitted: {splitted} from {a2}, b2 is {b2}"
+  ay.ternaryDivide(b2) + (ax.rotate7.ternaryDivide(b2).rotate3)
