@@ -125,3 +125,17 @@ iterator pairs*(a: DualBalancedTernary): tuple[key: int, val: DualBalancedTernar
     yield (idx, item)
   for idx, item in a.fractional:
     yield (-1 - idx, item)
+
+proc isZero*(a: DualBalancedTernary): bool =
+  let a2 = a.stripEmptyTails()
+  a2.integral.len == 0 and a2.fractional.len == 0
+
+proc isLinearTernary*(a: DualBalancedTernary): bool =
+  for item in a.integral:
+    if item != dbt1 and item != dbt5 and item != dbt9:
+      return false
+  for item in a.fractional:
+    if item != dbt1 and item != dbt5 and item != dbt9:
+      return false
+  return true
+

@@ -32,11 +32,11 @@ proc flipLeftRight*(a: DualBalancedTernaryDigit): DualBalancedTernaryDigit =
     of dbt1: dbt1
     of dbt2: dbt4
     of dbt3: dbt7
-    of dbt4: dbt4
+    of dbt4: dbt2
     of dbt5: dbt5
     of dbt6: dbt8
     of dbt7: dbt3
-    of dbt8: dbt8
+    of dbt8: dbt6
     of dbt9: dbt9
 
 proc rotate3*(a: DualBalancedTernaryDigit): DualBalancedTernaryDigit =
@@ -83,9 +83,9 @@ proc addDigits*(a, b: DualBalancedTernaryDigit): DigitsPair =
         of dbt1: (dbt1, dbt9)
         of dbt2: (dbt5, dbt7)
         of dbt3: (dbt5, dbt8)
-        of dbt4: (dbt5, dbt5)
+        of dbt4: (dbt5, dbt3)
         of dbt5: (dbt5, dbt1)
-        of dbt6: (dbt7, dbt8)
+        of dbt6: (dbt1, dbt2)
         of dbt7: (dbt5, dbt6)
         of dbt8: (dbt1, dbt4)
         of dbt9: (dbt5, dbt5)
@@ -177,24 +177,15 @@ proc mutiplyDigits*(a, b: DualBalancedTernaryDigit): DigitsPair =
       case b
         of dbt1: (dbt5, dbt2)
         of dbt2: (dbt3, dbt7)
-        of dbt3: (dbt6, dbt4)
+        of dbt3: (dbt5, dbt4)
         of dbt4: (dbt1, dbt9)
         of dbt5: (dbt5, dbt5)
         of dbt6: (dbt9, dbt1)
-        of dbt7: (dbt4, dbt6)
+        of dbt7: (dbt5, dbt4)
         of dbt8: (dbt7, dbt3)
         of dbt9: (dbt5, dbt8)
     of dbt3:
-      case b
-        of dbt1: (dbt5, dbt3)
-        of dbt2: (dbt5, dbt6)
-        of dbt3: (dbt5, dbt9)
-        of dbt4: (dbt5, dbt2)
-        of dbt5: (dbt5, dbt5)
-        of dbt6: (dbt5, dbt8)
-        of dbt7: (dbt5, dbt1)
-        of dbt8: (dbt5, dbt4)
-        of dbt9: (dbt5, dbt7)
+      (dbt5, b.rotate3())
     of dbt4:
       case b
         of dbt1: (dbt5, dbt4)
@@ -220,16 +211,7 @@ proc mutiplyDigits*(a, b: DualBalancedTernaryDigit): DigitsPair =
         of dbt8: (dbt1, dbt9)
         of dbt9: (dbt5, dbt4)
     of dbt7:
-      case b
-        of dbt1: (dbt5, dbt7)
-        of dbt2: (dbt5, dbt4)
-        of dbt3: (dbt5, dbt1)
-        of dbt4: (dbt5, dbt8)
-        of dbt5: (dbt5, dbt5)
-        of dbt6: (dbt5, dbt2)
-        of dbt7: (dbt5, dbt9)
-        of dbt8: (dbt5, dbt6)
-        of dbt9: (dbt5, dbt3)
+      (dbt5, b.rotate7())
     of dbt8:
       case b
         of dbt1: (dbt1, dbt8)
@@ -243,3 +225,15 @@ proc mutiplyDigits*(a, b: DualBalancedTernaryDigit): DigitsPair =
         of dbt9: (dbt5, dbt2)
     of dbt9:
       (dbt5, b.negate)
+
+proc splitYx*(a: DualBalancedTernaryDigit): tuple[y: DualBalancedTernaryDigit, x: DualBalancedTernaryDigit] =
+  case a
+    of dbt1: (dbt1, dbt5)
+    of dbt2: (dbt9, dbt7)
+    of dbt3: (dbt5, dbt3)
+    of dbt4: (dbt9, dbt3)
+    of dbt5: (dbt5, dbt5)
+    of dbt6: (dbt1, dbt7)
+    of dbt7: (dbt5, dbt7)
+    of dbt8: (dbt1, dbt3)
+    of dbt9: (dbt9, dbt5)
