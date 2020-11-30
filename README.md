@@ -41,13 +41,13 @@ similarly, it can be added, mutiplied and even divided. Notice that `&1` is the 
 ### Usage
 
 ```
-requires "https://github.com/dual-balanced-ternary/dual-balanced-ternary.nim#v0.0.1"
+requires "https://github.com/dual-balanced-ternary/dual-balanced-ternary.nim#v0.0.2"
 ```
 
 ```nim
 import dual_balanced_ternary
 
-echo "&1.1".parseTernary()
+echo "&1.1".parseTernary() # gets &1.1
 echo "&1.1".ternary # alias
 
 "&.3".ternary + "&45".ternary
@@ -55,11 +55,14 @@ echo "&1.1".ternary # alias
 "&.3".ternary * "&45".ternary
 "&.3".ternary / "&45".ternary
 
-"&.3".ternary.isZero
+"&.3".ternary.isZero # false
 "&.3".ternary.conjugate
 
 createDualBalancedTernary(1.1, 1.2) # create from float
-"&.3".ternary.toFloat
+"&36".ternary.toFloat # (2.0, 1.0)
+
+"&3.33".ternary.round # &3
+"&3.33".ternary.round(1) # &3.3
 ```
 
 ### License

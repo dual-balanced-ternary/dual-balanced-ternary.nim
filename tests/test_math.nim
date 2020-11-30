@@ -108,3 +108,11 @@ test "divide":
   check "&.55555928".ternary / "&.5536".ternary == "&.5543".ternary
 
   echo "&743317".ternary / "&616".ternary # not exact division
+
+test "round":
+  check "&2.4".ternary.round == "&2".ternary
+  check "&2.444".ternary.round(0) == "&2".ternary
+  check "&2.444".ternary.round(1) == "&2.4".ternary
+  check "&2.444".ternary.round(2) == "&2.44".ternary
+  check "&2.444".ternary.round(3) == "&2.444".ternary
+  check "&2.444".ternary.round(4) == "&2.444".ternary

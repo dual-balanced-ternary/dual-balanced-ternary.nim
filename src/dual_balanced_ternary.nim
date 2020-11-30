@@ -271,3 +271,22 @@ proc `/`*(a, b: DualBalancedTernary): DualBalancedTernary =
   # echo fmt"b.. {b} {cj} => {b2}"
   # echo fmt"splitted: {splitted} from {a2}, b2 is {b2}"
   ay.ternaryDivide(b2) + (ax.rotate7.ternaryDivide(b2).rotate3)
+
+proc round*(a: DualBalancedTernary): DualBalancedTernary =
+  DualBalancedTernary(integral: a.integral)
+
+proc round*(a: DualBalancedTernary, n: int): DualBalancedTernary =
+  if n < 0:
+    raise newException(ValueError, "not supported negative number to round")
+  if n > a.fractional.len:
+    a
+  else:
+    var fractional = initDeque[DualBalancedTernaryDigit]()
+    var i = 0
+    while i < n:
+      fractional.addLast(a.fractional[i])
+      i = i + 1
+    DualBalancedTernary(
+      integral: a.integral,
+      fractional: fractional
+    )
