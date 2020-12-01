@@ -7,7 +7,7 @@ import ./dual_balanced_ternary/types
 import ./dual_balanced_ternary/digit
 import ./dual_balanced_ternary/float
 
-export DualBalancedTernaryDigit, DualBalancedTernary, addDigits, mutiplyDigits, `$`, parseTernaryDigit, parseTernary, `==`, ternary, toFloat
+export DualBalancedTernaryDigit, DualBalancedTernary, addDigits, mutiplyDigits, `$`, parseTernaryDigit, parseTernary, `==`, ternary, toFloat, hash
 
 proc negate*(a: DualBalancedTernary): DualBalancedTernary =
   result = a
