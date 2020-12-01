@@ -116,3 +116,15 @@ test "round":
   check "&2.444".ternary.round(2) == "&2.44".ternary
   check "&2.444".ternary.round(3) == "&2.444".ternary
   check "&2.444".ternary.round(4) == "&2.444".ternary
+
+test "hashes":
+  check "&1".ternary != "&15".ternary
+  check "&1".ternary != "&.1".ternary
+  check "&1".ternary == "&1.5".ternary
+  check "&1".ternary == "&51".ternary
+
+  echo hash("&.1".ternary)
+  echo hash("&1".ternary)
+  echo hash("&19".ternary)
+  echo hash("&15".ternary)
+  echo hash("&11".ternary)

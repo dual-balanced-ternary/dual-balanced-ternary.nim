@@ -60,6 +60,7 @@ echo "&1.1".ternary # alias
 
 createDualBalancedTernary(1.1, 1.2) # create from float
 "&36".ternary.toFloat # (2.0, 1.0)
+"&36".ternary.hash
 
 "&3.33".ternary.round # &3
 "&3.33".ternary.round(1) # &3.3

@@ -1,6 +1,7 @@
 
 import deques
 import strutils
+import hashes
 
 # places of digits
 #
@@ -139,3 +140,29 @@ proc isLinearTernary*(a: DualBalancedTernary): bool =
       return false
   return true
 
+let digitHashBase = hash("DualBalancedTernaryDigit")
+let ternaryHashBase = hash("DualBalancedTernary")
+
+proc hash*(a: DualBalancedTernaryDigit): Hash =
+  var h: Hash = digitHashBase
+  case a
+    of dbt1: h = h !& hash(1)
+    of dbt2: h = h !& hash(2)
+    of dbt3: h = h !& hash(3)
+    of dbt4: h = h !& hash(4)
+    of dbt5: h = h !& hash(5)
+    of dbt6: h = h !& hash(6)
+    of dbt7: h = h !& hash(7)
+    of dbt8: h = h !& hash(8)
+    of dbt9: h = h !& hash(9)
+  result = !$h
+
+proc hash*(a: DualBalancedTernary): Hash =
+  let a2 = a.stripEmptyTails
+  var h: Hash = ternaryHashBase
+  for item in a2.integral:
+    h = h !& hash(item)
+  h = h !& hash(".")
+  for item in a2.fractional:
+    h = h !& hash(item)
+  result = !$h
