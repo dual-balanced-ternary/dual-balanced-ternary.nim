@@ -109,6 +109,9 @@ test "divide":
 
   echo "&743317".ternary / "&616".ternary # not exact division
 
+  # there was a bug in mutiply conjugated values
+  check "&9.41658555559".ternary / "&9.51372555559".ternary == "&1.653732945268634852684471755515159".ternary
+
 test "round":
   check "&2.4".ternary.round == "&2".ternary
   check "&2.444".ternary.round(0) == "&2".ternary

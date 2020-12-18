@@ -177,7 +177,7 @@ proc mutiplyDigits*(a, b: DualBalancedTernaryDigit): DigitsPair =
       case b
         of dbt1: (dbt5, dbt2)
         of dbt2: (dbt3, dbt7)
-        of dbt3: (dbt5, dbt4)
+        of dbt3: (dbt5, dbt6)
         of dbt4: (dbt1, dbt9)
         of dbt5: (dbt5, dbt5)
         of dbt6: (dbt9, dbt1)
